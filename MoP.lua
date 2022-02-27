@@ -108,7 +108,7 @@ addon.Cooldowns = {
 	[122292] = { class = "DRUID", duration = 30, specID = { 102  }, }, -- Symbiosis/Intervene
 	[106951] = { class = "DRUID", duration = 180, specID = { 103, 104  }, }, -- Druid/Feral-- Berserk (Cat Form)
 		[50334] = { parent = 106951 }, -- Berserk (Bear Form)
-	[80964] = { default = true, class = "DRUID", duration = 15, specID = { 103, 104  }, }, -- Skull Bash
+	[93985] = { default = true, class = "DRUID", duration = 15, specID = { 103, 104 }, }, -- Skull Bash
 	[5217] = { class = "DRUID", duration = 30, specID = { 103  }, }, -- Tiger's Fury
 	[110597] = { class = "DRUID", duration = 30, specID = { 103  }, }, -- Symbiosis/Play Dead
 	[110693] = { class = "DRUID", duration = 25, specID = { 103  }, }, -- Symbiosis/Frost Nova
@@ -128,7 +128,7 @@ addon.Cooldowns = {
 	[110717] = { class = "DRUID", duration = 180, specID = { 104  }, }, -- Symbiosis/Fear Ward
 	[122290] = { class = "DRUID", duration = 15, specID = { 104  }, }, -- Symbiosis/Life Tap
 	[113002] = { class = "DRUID", duration = 120, specID = { 104  }, }, -- Symbiosis/Spell Reflection
-	[102342] = { class = "DRUID", duration = 30, specID = { 105  }, }, -- Druid/Restoration-- Ironbark
+	[102342] = { class = "DRUID", duration = 30, specID = { 105  }, }, -- Druid/Restoration-- Ironbark (it's actually 60sec CD but 2set PvP bonus makes it 30sec)
 	[88423] = { class = "DRUID", duration = 8, specID = { 105  }, }, -- Nature's Cure
 	[18562] = { class = "DRUID", duration = 13, specID = { 105  }, }, -- Swiftmend
 	[48438] = { class = "DRUID", duration = 8, specID = { 105  }, }, -- Wild Growth
@@ -176,6 +176,7 @@ addon.Cooldowns = {
 	[113073] = { class = "HUNTER", duration = 180, specID = { 253, 254, 255  }, }, -- Symbiosis/Dash
 	[53209] = { class = "HUNTER", duration = 9, specID = { 254  }, }, -- Hunter/254 - Marksmanship-- Chimera Shot
 	[34490] = { class = "HUNTER", duration = 24, specID = { 254  }, }, -- Silencing Shot
+	[147362] = { default = true, class = "HUNTER", duration = 24, specID = { 253  }, }, -- Counter Shot
 	[53301] = { class = "HUNTER", duration = 6, specID = { 255  }, }, -- Hunter/255 - Survival-- Explosive Shot
 	[3674] = { class = "HUNTER", duration = 28, specID = { 255  }, }, -- Black Arrowsets_cooldown = { spellid = 13813, cooldown = 28  }, -- Explosive Trap
 	[1742] = { class = "HUNTER", duration = 45 }, -- Pet/Basic-- Cower
@@ -224,10 +225,10 @@ addon.Cooldowns = {
 
 	-- ================ MAGE ================
 
-	[108978] = { class = "MAGE", duration = 180 }, -- Alter Time
+	[108978] = { class = "MAGE", duration = 90 }, -- Alter Time (it's actually 180sec but Mage 4 set PvP brings it to 90sec) 
 	[1953] = { class = "MAGE", duration = 15 }, -- Blink
 	[120] = { class = "MAGE", duration = 10 }, -- Cone of Cold
-	[2139] = { default = true, class = "MAGE", duration = 20 }, -- Counterspell
+	[2139] = { default = true, class = "MAGE", duration = 24 }, -- Counterspell
 	[44572] = { class = "MAGE", duration = 30 }, -- Deep Freeze
 	[12051] = { class = "MAGE", duration = 120 }, -- Evocation
 	[2136] = { class = "MAGE", duration = 8 }, -- Fire Blast
