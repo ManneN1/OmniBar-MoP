@@ -50,5 +50,6 @@ To open the options panel, type `/ob`
 ## Backport Notes
 This backport was developed in ~2 days.
 
-* The spell list is from LibCooldownTracker (5.4.8), and it could be incorrect / improvements can be mande. Feel free to create an issue or pull request if you have an improvment suggestion.
-* The animation flash / and target & focus highlight functionality does not work. Feel free to create a pull request for this. The issue lies in most of the xml shorthands not existing (e.g. atlas, and atlassize) along with some of the textures not existing in MoP. 
+* The spell list is from LibCooldownTracker (5.4.8), and I've made minor edit. It could be incorrect / improvements can be made, _feel free to create an issue or pull request if you have an improvment suggestion._
+* In MoP, many talents, gear and glyphs impact CDs of spells (e.g. 4set Mage PvP set reducing Alter Time CD). I'm planning to add support for these, and where it is not possible to know the most common setup will be used (e.g. assume the target has 4set PvP bonus) these bonuses that impact CDs are/should be accommodated for. _Feel free to create an issue or pull request if you have an improvment suggestion._
+* The animation flash / and target & focus highlight functionality does not work. Feel free to create a pull request for this. The issue lies in most of the xml shorthands not existing (e.g. atlas, and atlassize) along with some of the textures not existing in MoP.  
