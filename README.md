@@ -1,11 +1,15 @@
 # OmniBar - MoP
 OmniBar is an _extremely lightweight_ addon that tracks enemy cooldowns. **Now for MoP!**
 
+Note: Rename the folder to OmniBar instead of OmniBar-MoP-master. Otherwise it won't work!
+
 ![OmniBar](http://i.imgur.com/p9DjSOh.png)
 
 [Open a ticket to report any issues](https://github.com/ManneN1/OmniBar-MoP/issues)
 
 [Submit a pull request](https://github.com/ManneN1/OmniBar-MoP/pulls)
+
+
 
 ## Features
 OmniBar is easily customizable, and has a rich feature set.
