@@ -647,24 +647,27 @@ function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellI
 
 	if (not name) then return end
 
-	if addon.Resets[spellID] and self.spellCasts[name] and event == "SPELL_CAST_SUCCESS" then
+	if addon.Resets[spellID] and self.spellCasts[name] and (event == "SPELL_CAST_SUCCESS" or "SPELL_INTERRUPT") then
 		for i = 1, #addon.Resets[spellID] do
-			local reset = addon.Resets[spellID][i]
-			if type(reset) == "table" and reset.amount then
+			local reset = addon.Resets[spellID][i]		
+			if type(reset) == "table" and ((event == "SPELL_CAST_SUCCESS" and reset.amount) or (event == "SPELL_INTERRUPT" and reset.interrupt)) then
 				if self.spellCasts[name][reset.spellID] then
-					self.spellCasts[name][reset.spellID].duration = self.spellCasts[name][reset.spellID].duration - reset.amount
+					local reductionAmount = event == "SPELL_CAST_SUCCESS" and reset.amount or reset.interrupt
+					self.spellCasts[name][reset.spellID].duration = self.spellCasts[name][reset.spellID].duration - reductionAmount
 					if self.spellCasts[name][reset.spellID].duration < 1 then
 						self.spellCasts[name][reset.spellID] = nil
 					end
 				end
-			else
+			elseif event == "SPELL_CAST_SUCCESS" then
 				if type(reset) == "table" then reset = reset.spellID end
 				self.spellCasts[name][reset] = nil
 			end
 		end
-		self:SendMessage("OmniBar_ResetSpellCast", name, spellID)
+		if (event == "SPELL_CAST_SUCCESS" or (event == "SPELL_INTERRUPT" and reset.interrupt)) then
+			self:SendMessage("OmniBar_ResetSpellCast", name, spellID)
+		end
 	end
-
+	
 	if (not addon.Cooldowns[spellID]) then return end
 
 	local now = GetTime()
@@ -729,7 +732,7 @@ function OmniBar:UNIT_SPELLCAST_SUCCEEDED(event, unit, _, spellID)
 end
 
 function OmniBar:COMBAT_LOG_EVENT_UNFILTERED(_, _, subEvent, _, sourceGUID, sourceName, sourceFlags, _,_,_,_,_, spellID, spellName)
-	if (subEvent == "SPELL_CAST_SUCCESS" or subEvent == "SPELL_AURA_APPLIED") then
+	if (subEvent == "SPELL_CAST_SUCCESS" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_INTERRUPT") then
 		self:AddSpellCast(subEvent, sourceGUID, sourceName, sourceFlags, spellID)
 	end
 end
