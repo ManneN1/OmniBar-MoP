@@ -6,6 +6,7 @@ addon.Resets = {
     [111897] = { 119910 }, -- Grimoire: Felhunter
 	[11958] = { 45438, 122, 120 }, -- Cold Snap
 	[14185] = { 2983, 1856, 31224, 5277, 51722 }, -- Preparation
+	[2139] = { { spellID = 2139, interrupt = 4 } }, -- Counterspell successful interrupt minus 4 sec CD (2-set PvP bonus)
 }
 
 addon.Cooldowns = {
