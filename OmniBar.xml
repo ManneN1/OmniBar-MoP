@@ -173,11 +173,15 @@
 						
 						local origSetCooldown = self.SetCooldown
 						self.SetCooldown = function(self, start, duration, charges, maxCharges)
-							self.duration = duration
+                            if self.timer then
+                                self:CancelTimer(self.timer)
+                                self.timer = nil
+                            end
+                            self.duration = duration
 							self.start = start
 							origSetCooldown(self, start, duration, charges, maxCharges)
 							if duration ~= 0 then
-								self:ScheduleTimer("OmniBar_CooldownFinish", duration, self)
+								self.timer = self:ScheduleTimer("OmniBar_CooldownFinish", duration, self)
 							end
 						end
 					
