@@ -777,6 +777,14 @@ function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellI
         spellName = GetSpellInfo(spellID),
         timestamp = now,
     }
+    self:SendMessage("OmniBar_SpellCast", name, spellID)
+    
+    if self.spellCasts[name].timer then
+        self:CancelTimer(self.timer)
+    end
+    if not IsActiveBattlefieldArena() then
+        self.spellCasts[name].timer = self:ScheduleTimer(self.ClearUnit, 300, self, name)
+    end
 end
 
 -- Needed to track PvP trinkets and possibly other spells that do not show up in COMBAT_LOG_EVENT_UNFILTERED
@@ -800,6 +808,17 @@ function OmniBar:COMBAT_LOG_EVENT_UNFILTERED(_, _, subEvent, _, sourceGUID, sour
 	if (subEvent == "SPELL_CAST_SUCCESS" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_INTERRUPT") then
 		self:AddSpellCast(subEvent, sourceGUID, sourceName, sourceFlags, spellID)
 	end
+end
+
+function OmniBar:ClearUnit(unit)
+    if IsActiveBattlefieldArena() or self.spellCasts[unit] == nil then return end
+    local now = GetTime()
+    for k, v in pairs(self.spellCasts[unit]) do
+        if k ~= "special" and k ~= "timer" and (v ~= nil and v.expires > now) then
+            return
+        end
+    end
+    self.spellCasts[unit] = nil
 end
 
 function OmniBar_Refresh(self)
