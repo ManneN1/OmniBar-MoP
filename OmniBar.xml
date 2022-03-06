@@ -125,9 +125,6 @@
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
-					<OnShow>
-
-					</OnShow>
 				</Texture>
 				<Texture parentKey="NewItemTexture" alpha="0" alphaMode="ADD" atlas="bags-glow-blue" useAtlasSize="true">
 					<Anchors>
@@ -168,7 +165,8 @@
 					
 					<OnLoad>
 						LibStub("AceTimer-3.0"):Embed(self)
-						
+						local GetTime = GetTime
+                        
 						self.OmniBar_CooldownFinish = OmniBar_CooldownFinish
 						
 						local origSetCooldown = self.SetCooldown
@@ -177,12 +175,18 @@
                                 self:CancelTimer(self.timer)
                                 self.timer = nil
                             end
+                            
                             self.duration = duration
 							self.start = start
 							origSetCooldown(self, start, duration, charges, maxCharges)
-							if duration ~= 0 then
-								self.timer = self:ScheduleTimer("OmniBar_CooldownFinish", duration, self)
-							end
+							
+                            if duration > 0 then
+                                local now = GetTime() 
+                                local timeLeft = start + duration - now
+								self.timer = self:ScheduleTimer("OmniBar_CooldownFinish", timeLeft, self)
+							else
+                                OmniBar_CooldownFinish(self)
+                            end
 						end
 					
 						self.GetCooldownTimes = function(self)

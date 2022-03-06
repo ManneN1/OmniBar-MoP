@@ -658,13 +658,12 @@ function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellI
 						self.spellCasts[name][reset.spellID] = nil
 					end
 				end
+                self:SendMessage("OmniBar_ResetSpellCast", name, reset.spellID)
 			elseif event == "SPELL_CAST_SUCCESS" then
 				if type(reset) == "table" then reset = reset.spellID end
 				self.spellCasts[name][reset] = nil
+                self:SendMessage("OmniBar_ResetSpellCast", name, reset)
 			end
-		end
-		if (event == "SPELL_CAST_SUCCESS" or (event == "SPELL_INTERRUPT" and reset.interrupt)) then
-			self:SendMessage("OmniBar_ResetSpellCast", name, spellID)
 		end
 	end
 	
@@ -1141,7 +1140,6 @@ end
 
 function OmniBar_StartCooldown(self, icon, start)
 	icon.cooldown:SetCooldown(start, icon.duration)
-	-- need to start a timer to revert it to normal on end?
 	--icon.cooldown:SetSwipeColor(0, 0, 0, self.settings.swipeAlpha or 0.65)
 	icon:SetAlpha(1)
 end

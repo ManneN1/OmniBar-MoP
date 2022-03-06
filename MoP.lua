@@ -7,7 +7,7 @@ addon.Resets = {
     [691]       = { 19647 },                                                    -- Summon Felhunter
     [11958]     = { 45438, 122, 120 },                                          -- Cold Snap
     [14185]     = { 2983, 1856, 31224, 5277, 51722 },                           -- Preparation
-    [2139]      = { { spellID = 2139, interrupt = 4 } },                        -- Counterspell, successful interrupt decreases CD by 4sec (2-set PvP bonus)
+    [2139]      = { { spellID = 2139, interrupt = 4 }, },                       -- Counterspell, successful interrupt decreases CD by 4sec (2-set PvP bonus)
     [81162]     = { 48982 },                                                    -- Will of the Necropolis
     [11129]     = { 108853 },                                                   -- Combustion
     [108285]    = { 8143, 8177, 108269, 108270, 108273, 2484, 51485, 5394 },    -- Call of the Elements
