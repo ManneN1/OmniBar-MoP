@@ -636,81 +636,147 @@ local function GetCooldownDuration(cooldown, specID)
 end
 
 function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellID)
-	if (not addon.Resets[spellID]) and (not addon.Cooldowns[spellID]) then return end
-
-	-- unset unknown sourceName
-	sourceName = sourceName == COMBATLOG_FILTER_STRING_UNKNOWN_UNITS and nil or sourceName
-
-	-- if it's a pet associate with owner
-	local ownerName = UnitOwnerName(sourceGUID)
-	local name = ownerName or sourceName
-
-	if (not name) then return end
-
-	if addon.Resets[spellID] and self.spellCasts[name] and (event == "SPELL_CAST_SUCCESS" or "SPELL_INTERRUPT") then
-		for i = 1, #addon.Resets[spellID] do
-			local reset = addon.Resets[spellID][i]		
-			if type(reset) == "table" and ((event == "SPELL_CAST_SUCCESS" and reset.amount) or (event == "SPELL_INTERRUPT" and reset.interrupt)) then
-				if self.spellCasts[name][reset.spellID] then
-					local reductionAmount = event == "SPELL_CAST_SUCCESS" and reset.amount or reset.interrupt
-					self.spellCasts[name][reset.spellID].duration = self.spellCasts[name][reset.spellID].duration - reductionAmount
-					if self.spellCasts[name][reset.spellID].duration < 1 then
-						self.spellCasts[name][reset.spellID] = nil
-					end
-				end
+    if (not addon.Resets[spellID]) and (not addon.Cooldowns[spellID]) then return end
+    
+    -- unset unknown sourceName
+    sourceName = sourceName == COMBATLOG_FILTER_STRING_UNKNOWN_UNITS and nil or sourceName
+    
+    -- if it's a pet associate with owner
+    local ownerName = UnitOwnerName(sourceGUID)
+    local name = ownerName or sourceName
+    
+    if (not name) then return end
+    
+    local now
+    
+    if addon.Resets[spellID] and self.spellCasts[name] and (event == "SPELL_CAST_SUCCESS" or "SPELL_INTERRUPT") then
+        for i = 1, #addon.Resets[spellID] do
+            local reset = addon.Resets[spellID][i]		
+            if type(reset) == "table" and ((event == "SPELL_CAST_SUCCESS" and reset.amount) or (event == "SPELL_INTERRUPT" and reset.interrupt)) then
+                if self.spellCasts[name][reset.spellID] then
+                    local reductionAmount = event == "SPELL_CAST_SUCCESS" and reset.amount or reset.interrupt
+                    if type(reductionAmount) == "boolean" then reductionAmount = self.spellCasts[name][reset.spellID].duration end
+                    self.spellCasts[name][reset.spellID].duration = self.spellCasts[name][reset.spellID].duration - reductionAmount
+                    if self.spellCasts[name][reset.spellID].duration < 1 then
+                        self.spellCasts[name][reset.spellID] = nil
+                    end
+                end
                 self:SendMessage("OmniBar_ResetSpellCast", name, reset.spellID)
-			elseif event == "SPELL_CAST_SUCCESS" then
-				if type(reset) == "table" then reset = reset.spellID end
-				self.spellCasts[name][reset] = nil
-                self:SendMessage("OmniBar_ResetSpellCast", name, reset)
-			end
-		end
-	end
-	
-	if (not addon.Cooldowns[spellID]) then return end
-
-	local now = GetTime()
-
-	-- make sure we aren't adding a duplicate
-	if self.spellCasts[name] and self.spellCasts[name][spellID] and self.spellCasts[name][spellID].timestamp == now then
-		return
-	end
-
-	-- only track players and their pets
-	if (not ownerName) and bit_band(sourceFlags, COMBATLOG_OBJECT_TYPE_PLAYER) == 0 then return end
-
-	local duration = GetCooldownDuration(addon.Cooldowns[spellID])
-	local charges = addon.Cooldowns[spellID].charges
-
-	-- make sure spellID is parent
-	spellID = addon.Cooldowns[spellID].parent or spellID
-
-	-- child doesn't have custom charges, use parent
-	if (not charges) then
-		charges = addon.Cooldowns[spellID].charges
-	end
-
-	-- child doesn't have a custom duration, use parent
-	if (not duration) then
-		duration = GetCooldownDuration(addon.Cooldowns[spellID])
-	end
-
-	self.spellCasts[name] = self.spellCasts[name] or {}
-	self.spellCasts[name][spellID] = {
-		maxCharges = charges,
-		charges = charges,
-		duration = duration,
-		event = event,
-		expires = now + duration,
-		ownerName = ownerName,
-		sourceFlags = sourceFlags,
-		sourceGUID = sourceGUID,
-		sourceName = sourceName,
-		spellID = spellID,
-		spellName = GetSpellInfo(spellID),
-		timestamp = now,
-	}
-	self:SendMessage("OmniBar_SpellCast", name, spellID)
+            elseif event == "SPELL_CAST_SUCCESS" then
+                if type(reset) == "table" and reset.useBeforeCD then -- special skip cases
+                    if reset.skipFirst then -- Clemency or similar
+                        self.spellCasts[name].special = self.spellCasts[name].special or {}
+                        for i=1, #reset.spellID do
+                            if not self.spellCasts[name].special[reset.spellID[i]] then
+                                self.spellCasts[name].special[reset.spellID[i]] = self.spellCasts[name].special[reset.spellID[i]] or { }
+                                self.spellCasts[name].special[reset.spellID[i]].skipFirst = reset.skipFirst
+                                self.spellCasts[name][reset.spellID[i]] = nil
+                            end
+                        end
+                    elseif self.spellCasts[name][spellID] and reset.reduction then -- there must be some CD reduction talent (e.g. Unbreakable Spirit)
+                        self.spellCasts[name].special = self.spellCasts[name].special or {}
+                        for i=1, #reset.spellID do
+                            if not self.spellCasts[name].special[reset.spellID[i]] then
+                                self.spellCasts[name].special[reset.spellID[i]] = self.spellCasts[name].special[reset.spellID[i]] or { }
+                                self.spellCasts[name].special[reset.spellID[i]].reduction = reset.reduction
+                                self.spellCasts[name].special[reset.spellID[i]].absolute = reset.absolute and true or false
+                                if self.spellCasts[name][reset.spellID[i]] then -- update already showing CDs to reflect the CD reduction
+                                    local duration = (self.spellCasts[name][reset.spellID[i]].timestamp - self.spellCasts[name][reset.spellID[i]].expires)
+                                    if reset.reduction and reset.absolute then
+                                        duration = duration - reset.reduction
+                                    else
+                                        duration = duration * reset.reduction
+                                    end
+                                    self.spellCasts[name][reset.spellID[i]].duration = duration
+                                end
+                            end
+                        end
+                    elseif self.spellCasts[name][spellID] and reset.skipTimeFromFirstUse then -- ability is re-usable without CD
+                        now = GetTime()
+                        local timeSinceUse = now - self.spellCasts[name][spellID].timestamp
+                        if timeSinceUse < reset.skipTimeFromFirstUse then 
+                            return 
+                        end
+                    end
+                    self:SendMessage("OmniBar_ResetSpellCast", name, spellID)
+                else
+                    self.spellCasts[name][reset] = nil
+                    self:SendMessage("OmniBar_ResetSpellCast", name, reset)
+                end
+            end
+        end
+    end
+    
+    if (not addon.Cooldowns[spellID]) then return end
+    
+    
+    local blockEvent = addon.Resets[spellID] and addon.Resets[spellID][1].blockEvent or ""
+    if blockEvent == event then return end 
+    
+    now = now and now or GetTime()
+    
+    -- make sure we aren't adding a duplicate
+    if self.spellCasts[name] and self.spellCasts[name][spellID] and self.spellCasts[name][spellID].timestamp == now then
+        return
+    end
+    
+    -- only track players and their pets
+    if (not ownerName) and bit_band(sourceFlags, COMBATLOG_OBJECT_TYPE_PLAYER) == 0 then return end
+    
+    local duration = GetCooldownDuration(addon.Cooldowns[spellID])
+    local charges = addon.Cooldowns[spellID].charges
+    
+    -- make sure spellID is parent
+    spellID = addon.Cooldowns[spellID].parent or spellID
+    
+    -- child doesn't have custom charges, use parent
+    if (not charges) then
+        charges = addon.Cooldowns[spellID].charges
+    end
+    
+    -- child doesn't have a custom duration, use parent
+    if (not duration) then
+        duration = GetCooldownDuration(addon.Cooldowns[spellID])
+    end
+    
+    -- special effects may reduce CD or allow the player to use the ability a x amount of times without/before incurring CD
+    if self.spellCasts[name] and self.spellCasts[name].special and self.spellCasts[name].special[spellID] then
+        local special = self.spellCasts[name].special[spellID]
+        if special.skipFirst then
+            if special.count then
+                special.count = special.count + 1
+                if special.count <= special.skipFirst then
+                    return
+                else
+                    special.count = 0
+                end
+            else
+                special.count = 1
+            end
+        elseif special.reduction then
+            if special.absolute then
+                duration = duration - special.reduction
+            else
+                duration = duration * special.reduction
+            end
+        end
+    end 
+    
+    self.spellCasts[name] = self.spellCasts[name] or {}
+    self.spellCasts[name][spellID] = {
+        maxCharges = charges,
+        charges = charges,
+        duration = duration,
+        event = event,
+        expires = now + duration,
+        ownerName = ownerName,
+        sourceFlags = sourceFlags,
+        sourceGUID = sourceGUID,
+        sourceName = sourceName,
+        spellID = spellID,
+        spellName = GetSpellInfo(spellID),
+        timestamp = now,
+    }
 end
 
 -- Needed to track PvP trinkets and possibly other spells that do not show up in COMBAT_LOG_EVENT_UNFILTERED
@@ -1070,15 +1136,17 @@ end
 function OmniBar_ReplaySpellCasts(self)
 	if self.disabled then return end
 
-	local now = GetTime()
+    local now = GetTime()
 
 	for name,_ in pairs(self.spellCasts) do
 		for k,v in pairs(self.spellCasts[name]) do
-			if now >= v.expires then
-				self.spellCasts[name][k] = nil
-			else
-				OmniBar_AddIcon(self, self.spellCasts[name][k])
-			end
+            if k ~= "special" and k ~= "timer" then
+                if now >= v.expires then
+                    self.spellCasts[name][k] = nil
+                else
+                    OmniBar_AddIcon(self, self.spellCasts[name][k])
+                end
+            end
 		end
 	end
 end

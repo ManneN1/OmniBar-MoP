@@ -3,14 +3,21 @@ local addonName, addon = ...
 addon.MAX_ARENA_SIZE = 5
 
 addon.Resets = {
-    [111897]    = { 119910, },                                                                  -- Grimoire: Felhunter
-    [691]       = { 19647, },                                                                   -- Summon Felhunter
-    [11958]     = { 45438, 122, 120, },                                                         -- Cold Snap
-    [14185]     = { 2983, 1856, 31224, 5277, 51722, },                                          -- Preparation
-    [2139]      = { { spellID = 2139, interrupt = 4, }, },                                      -- Counterspell, successful interrupt decreases CD by 4sec (2-set PvP bonus)
-    [81162]     = { 48982, },                                                                   -- Will of the Necropolis
-    [11129]     = { 108853, },                                                                  -- Combustion
-    [108285]    = { 8143, 8177, 108269, 108270, 108273, 2484, 51485, 5394, },                   -- Call of the Elements
+    [2139]      = { { spellID = 2139, interrupt = 4,  }, },                                                                         -- Counterspell, successful interrupt decreases CD by 4sec (2-set PvP bonus)
+    [93985]     = { { spellID = 5229, interrupt = true, }, },                                                                       -- Skull Bash, successful interrupt resets Enrage (4-set PvP bonus)
+    [49576]     = { { skipTimeFromFirstUse = 3, useBeforeCD = true, }, },                                                           -- DK 4-set skips usages of Death Grip if used within 3sec of the first use
+    [1044]      = { { spellID = {1044, 1022, }, skipFirst = 1, useBeforeCD = true, blockEvent = "SPELL_AURA_APPLIED", }, },         -- Hand of Freedom w. Clemency 
+    [1022]      = { { spellID = {1044, 1022, }, skipFirst = 1, useBeforeCD = true, blockEvent = "SPELL_AURA_APPLIED", }, },         -- Hand of Protection w. Clemency
+    [642]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                                      -- Divine Shield w. Unbreakable Spirit
+    [633]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                                      -- Lay on Hands w. Unbreakable Spirit
+    [498]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                                      -- Divine Protection w. Unbreakable Spirit
+    [111897]    = { 119910, },                                                                                                      -- Grimoire: Felhunter
+    [691]       = { 19647,  },                                                                                                      -- Summon Felhunter
+    [81162]     = { 48982,  },                                                                                                      -- Will of the Necropolis
+    [11129]     = { 108853, },                                                                                                      -- Combustion
+    [11958]     = { 45438, 122, 120, },                                                                                             -- Cold Snap
+    [14185]     = { 2983, 1856, 31224, 5277, 51722, },                                                                              -- Preparation
+    [108285]    = { 8143, 8177, 108269, 108270, 108273, 2484, 51485, 5394, },                                                       -- Call of the Elements
 }
 
 addon.Cooldowns = {
@@ -236,7 +243,7 @@ addon.Cooldowns = {
     [108978]   = { class = "MAGE", duration = 90,  },                                           -- Alter Time (it's actually 180sec but Mage 4 set PvP brings it to 90sec)
     [1953]     = { class = "MAGE", duration = 15,  },                                           -- Blink
     [120]      = { class = "MAGE", duration = 10,  },                                           -- Cone of Cold
-    [2139]     = { default    = true, class = "MAGE", duration = 24, },                         -- Counterspell
+    [2139]     = { default = true, class = "MAGE", duration = 24, },                            -- Counterspell
     [44572]    = { class = "MAGE", duration = 30,  },                                           -- Deep Freeze
     [12051]    = { class = "MAGE", duration = 120, },                                           -- Evocation
     [2136]     = { class = "MAGE", duration = 8,   },                                           -- Fire Blast
@@ -440,6 +447,7 @@ addon.Cooldowns = {
     [115356]  = { class = "SHAMAN", duration = 8    },                                          -- Stormblast
     [120668]  = { class = "SHAMAN", duration = 300, },                                          -- Stormlash Totem
     [8143]    = { class = "SHAMAN", duration = 60,  },                                          -- Tremor Totem
+    [31616]   = { class = "SHAMAN", duration = 30,  },                                          -- Nature's Guardian
     [73680]   = { class = "SHAMAN", duration = 15,  },                                          -- Unleash Elements
     [73685]   = { class = "SHAMAN", duration = 15,  },                                          -- Unleash Life
     [57994]   = { default = true, class = "SHAMAN", duration = 12, },                           -- Wind Shear
