@@ -710,7 +710,7 @@ function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellI
     if (not addon.Cooldowns[spellID]) then return end
     
     
-    local blockEvent = addon.Resets[spellID] and addon.Resets[spellID][1].blockEvent or ""
+    local blockEvent = addon.Resets[spellID] and addon.Resets[spellID][1] and type(addon.Resets[spellID][1]) == "table" and addon.Resets[spellID][1].blockEvent or ""
     if blockEvent == event then return end 
     
     now = now and now or GetTime()
