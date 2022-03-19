@@ -3,21 +3,21 @@ local addonName, addon = ...
 addon.MAX_ARENA_SIZE = 5
 
 addon.Resets = {
-    [2139]      = { { spellID = 2139, interrupt = 4,  }, },                                                                         -- Counterspell, successful interrupt decreases CD by 4sec (2-set PvP bonus)
-    [93985]     = { { spellID = 5229, interrupt = true, }, },                                                                       -- Skull Bash, successful interrupt resets Enrage (4-set PvP bonus)
-    [49576]     = { { skipTimeFromFirstUse = 3, useBeforeCD = true, }, },                                                           -- DK 4-set skips usages of Death Grip if used within 3sec of the first use
-    [1044]      = { { spellID = {1044, 1022, }, skipFirst = 1, useBeforeCD = true, blockEvent = "SPELL_AURA_APPLIED", }, },         -- Hand of Freedom w. Clemency 
-    [1022]      = { { spellID = {1044, 1022, }, skipFirst = 1, useBeforeCD = true, blockEvent = "SPELL_AURA_APPLIED", }, },         -- Hand of Protection w. Clemency
-    [642]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                                      -- Divine Shield w. Unbreakable Spirit
-    [633]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                                      -- Lay on Hands w. Unbreakable Spirit
-    [498]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                                      -- Divine Protection w. Unbreakable Spirit
-    [111897]    = { 119910, },                                                                                                      -- Grimoire: Felhunter
-    [691]       = { 19647,  },                                                                                                      -- Summon Felhunter
-    [81162]     = { 48982,  },                                                                                                      -- Will of the Necropolis
-    [11129]     = { 108853, },                                                                                                      -- Combustion
-    [11958]     = { 45438, 122, 120, },                                                                                             -- Cold Snap
-    [14185]     = { 2983, 1856, 31224, 5277, 51722, },                                                                              -- Preparation
-    [108285]    = { 8143, 8177, 108269, 108270, 108273, 2484, 51485, 5394, },                                                       -- Call of the Elements
+    [2139]      = { { spellID = 2139, interrupt = 4,  }, },                                                                 -- Counterspell, successful interrupt decreases CD by 4sec (2-set PvP bonus)
+    [93985]     = { { spellID = 5229, interrupt = true, }, },                                                               -- Skull Bash, successful interrupt resets Enrage (4-set PvP bonus)
+    [49576]     = { { skipTimeFromFirstUse = 3, useBeforeCD = true, }, },                                                   -- DK 4-set skips usages of Death Grip if used within 3sec of the first use
+    [1044]      = { { spellID = {1044, 1022, }, skipFirst = 1, useBeforeCD = true, blockEvent = "SPELL_AURA_APPLIED", }, }, -- Hand of Freedom w. Clemency 
+    [1022]      = { { spellID = {1044, 1022, }, skipFirst = 1, useBeforeCD = true, blockEvent = "SPELL_AURA_APPLIED", }, }, -- Hand of Protection w. Clemency
+    [642]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                              -- Divine Shield w. Unbreakable Spirit
+    [633]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                              -- Lay on Hands w. Unbreakable Spirit
+    [498]       = { { spellID = { 498, 633, 642, }, reduction = 0.5, useBeforeCD = true, }, },                              -- Divine Protection w. Unbreakable Spirit
+    [111897]    = { 119910, },                                                                                              -- Grimoire: Felhunter
+    [691]       = { 19647,  },                                                                                              -- Summon Felhunter
+    [81162]     = { 48982,  },                                                                                              -- Will of the Necropolis
+    [11129]     = { 108853, },                                                                                              -- Combustion
+    [11958]     = { 45438, 122, 120, },                                                                                     -- Cold Snap
+    [14185]     = { 2983, 1856, 31224, 5277, 51722, },                                                                      -- Preparation
+    [108285]    = { 8143, 8177, 108269, 108270, 108273, 2484, 51485, 5394, },                                               -- Call of the Elements
 }
 
 addon.Cooldowns = {
@@ -83,20 +83,24 @@ addon.Cooldowns = {
     [102401]    = { class = "DRUID", duration = 15,  },                                         -- Wild Charge
         [16979]     = { parent = 102401, },                                                     -- Wild Charge Bear
         [49376]     = { parent = 102401, },                                                     -- Wild Charge Cat
+        [102383]    = { parent = 102401, },                                                     -- Wild Charge Moonkin
         [102416]    = { parent = 102401, },                                                     -- Wild Charge Aquatic
         [102417]    = { parent = 102401, },                                                     -- Wild Charge Travel
-        [102383]    = { parent = 102401, },                                                     -- Wild Charge Moonkin
-    [106737]    = { class = "DRUID", duration = 20, charges = 3, },                             -- Force of Nature
     [106731]    = { class = "DRUID", duration = 180, },                                         -- Incarnation
-        [102706]    = { parent = 106731, },                                                     -- Incarnation Guardian
-        [102703]    = { parent = 106731, },                                                     -- Incarnation Feral
-        [102693]    = { parent = 106731, },                                                     -- Incarnation Restoration
-        [33831]     = { parent = 106731, },                                                     -- Incarnation Balance
+        [33891]     = { parent = 106731, },                                                     -- Incarnation Restoration
+        [102543]    = { parent = 106731, },                                                     -- Incarnation Feral
+        [102558]    = { parent = 106731, },                                                     -- Incarnation Guardian
+        [102560]    = { parent = 106731, },                                                     -- Incarnation Balance
+    [106737]    = { class = "DRUID", duration = 20, charges = 3, },                             -- Force of Nature
+        [33831]     = { parent = 106737, },                                                     -- Force of Nature Balance
+        [102693]    = { parent = 106737, },                                                     -- Force of Nature Restoration
+        [102703]    = { parent = 106737, },                                                     -- Force of Nature Feral
+        [102706]    = { parent = 106737, },                                                     -- Force of Nature Guardian
     [108288]    = { class = "DRUID", duration = 360, },                                         -- Heart of the Wild
-        [102558]    = { parent = 108288, },                                                     -- Heart of the Wild Guardian
-        [102543]    = { parent = 108288, },                                                     -- Heart of the Wild Feral
-        [33891]     = { parent = 108288, },                                                     -- Heart of the Wild Restoration
-        [102560]    = { parent = 108288, },                                                     -- Heart of the Wild Balance
+        [108291]    = { parent = 108288, },                                                     -- Heart of the Wild Balance
+        [108292]    = { parent = 108288, },                                                     -- Heart of the Wild Feral
+        [108293]    = { parent = 108288, },                                                     -- Heart of the Wild Guardian
+        [108294]    = { parent = 108288, },                                                     -- Heart of the Wild Restoration
     [102359]    = { class = "DRUID", duration = 30,  },                                         -- Mass Entanglement
     [5211]      = { class = "DRUID", duration = 50,  },                                         -- Mighty Bash
     [132158]    = { class = "DRUID", duration = 60,  },                                         -- Nature's Swiftness
