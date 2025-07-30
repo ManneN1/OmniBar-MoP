@@ -1,3 +1,5 @@
+**This is for MoP 5.4.8 (Original). Not for MoP Classic!**
+
 **Note: Rename the folder to OmniBar instead of OmniBar-MoP-main. Otherwise it won't work!**
 
 # OmniBar - MoP
